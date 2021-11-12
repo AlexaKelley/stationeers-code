@@ -1,0 +1,48 @@
+# this program to help manage H2 Combustor
+# and the fuel mixer
+
+alias H2Combust d0
+alias FuelMixer d1
+alias MixerLev d2
+alias FlowLev d3
+alias CombuLev d4
+
+alias MixLevVar r0
+alias FlowLevVar r1
+alias CombuLevVar r2
+alias MixerState r3
+define HYDROGENSET 100
+
+
+start:
+# Load all the vars
+
+# copy mix lever state to var
+l MixLevVar MixerLev Open
+# copy Flow lever state
+l FlowLevVar FlowLev Open
+# copy Combustor lever state
+l CombuLevVar CombuLev Open
+
+# write flow lever to mixer on/off
+s FuelMixer On FlowLevVar 
+
+# write Combustor from lever on/off
+s H2Combust On CombuLevVar
+
+# logic for mixer lev
+# if MixLevVar = 1 (hydrogen) jmp to hydro
+seq MixLevVar MixerState HYDROGENSET
+
+# if 0 then write 0 to mixer
+s FuelMixer Setting MixerState 
+
+yield
+j start
+
+#mixerlev 0 = oxygen
+#mixerlev 1 = hydrogen
+#flowlev 0 = off
+#flowlev 1 = on
+# CombuLev 0 = off
+# CombuLev 1 = on
